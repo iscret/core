@@ -206,16 +206,12 @@ class FederatedShareProviderTest extends \Test\TestCase {
 
 		$share = $this->shareManager->newShare();
 
-		$node = $this->createMock('\OCP\Files\File');
-		$node->method('getId')->willReturn(42);
-		$node->method('getName')->willReturn('myFile');
-
 		$share->setSharedWith('user@server.com')
 			->setSharedBy('sharedBy')
 			->setShareOwner('shareOwner')
 			->setPermissions(19)
 			->setExpirationDate($expirationDate)
-			->setNode($node);
+			->setNode($this->defaultNode);
 
 		$this->tokenHandler->method('generateToken')->willReturn('token');
 
@@ -240,6 +236,7 @@ class FederatedShareProviderTest extends \Test\TestCase {
 			)->willReturn(self::OCS_GENERIC_SUCCESS);
 
 		$this->rootFolder->expects($this->never())->method($this->anything());
+		$this->userManager->method('userExists')->willReturn(true);
 
 		$share = $this->provider->create($share);
 
