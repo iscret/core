@@ -517,6 +517,7 @@ Feature: federated
 
   Scenario Outline: Federate share a file with local server with expiration date
     Given using OCS API version "<ocs-api-version>"
+    And using server "REMOTE"
     And parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "yes"
     And parameter "shareapi_enforce_expire_date_remote_share" of app "core" has been set to "yes"
     And parameter "shareapi_expire_after_n_days_remote_share" of app "core" has been set to "7"
@@ -558,9 +559,10 @@ Feature: federated
       | 1               | 100        |
       | 2               | 200        |
 
-  Scenario Outline: User modifies expiration date for federate share
+  Scenario Outline: Expiration date is enforced for federate share, user modifies expiration date
     Given using OCS API version "<ocs-api-version>"
     And parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "yes"
+    And parameter "shareapi_enforce_expire_date_remote_share" of app "core" has been set to "yes"
     And parameter "shareapi_expire_after_n_days_remote_share" of app "core" has been set to "7"
     When user "Brian" from server "LOCAL" shares "/textfile0.txt" with user "Alice" from server "REMOTE" using the sharing API
     And user "Brian" updates the last share using the sharing API with
@@ -573,3 +575,39 @@ Feature: federated
       | ocs-api-version | ocs-status |
       | 1               | 100        |
       | 2               | 200        |
+
+  Scenario Outline: User modifies expiration date for federate reshare a file with another server with default expiration date
+    Given using OCS API version "<ocs_api_version>"
+    And using server "LOCAL"
+    And user "Carol" has been created with default attributes and without skeleton files
+    And parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "yes"
+    And parameter "shareapi_expire_after_n_days_remote_share" of app "core" has been set to "7"
+    And user "Brian" has shared file "/textfile0.txt" with user "Carol" with permissions "read,update,share"
+    When user "Carol" from server "LOCAL" shares "/textfile0.txt" with user "Alice" from server "REMOTE" using the sharing API
+    And user "Brian" updates the last share using the sharing API with
+      | expireDate | +3 days |
+    Then the HTTP status code should be "200"
+    And the OCS status code should be "<ocs-status>"
+    And the fields of the last response to user "Brian" sharing with user "Alice" should include
+      | expiration | +3 days |
+
+    Examples:
+      | ocs_api_version | ocs-status |
+      | 1               | 100        |
+      | 2               | 200        |
+
+  Scenario Outline: Federated sharing with default expiration date enabled and enforced, user shares with expiration date more than the default
+    Given using OCS API version "<ocs_api_version>"
+    And parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "yes"
+    And parameter "shareapi_enforce_expire_date_remote_share" of app "core" has been set to "yes"
+    And parameter "shareapi_expire_after_n_days_remote_share" of app "core" has been set to "7"
+    When user "Brian" from server "LOCAL" shares "/textfile0.txt" with user "Alice" from server "REMOTE" using the sharing API
+    And user "Brian" updates the last share using the sharing API with
+      | expireDate | +10 days |
+    Then the OCS status code should be "404"
+    And the HTTP status code should be "<http_status_code>"
+
+    Examples:
+      | ocs_api_version | http_status_code |
+      | 1               | 200              |
+      | 2               | 404              |
