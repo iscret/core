@@ -559,10 +559,9 @@ Feature: federated
       | 1               | 100        |
       | 2               | 200        |
 
-  Scenario Outline: Expiration date is enforced for federate share, user modifies expiration date
+  Scenario Outline: User modifies expiration date for federate share
     Given using OCS API version "<ocs-api-version>"
     And parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "yes"
-    And parameter "shareapi_enforce_expire_date_remote_share" of app "core" has been set to "yes"
     And parameter "shareapi_expire_after_n_days_remote_share" of app "core" has been set to "7"
     When user "Brian" from server "LOCAL" shares "/textfile0.txt" with user "Alice" from server "REMOTE" using the sharing API
     And user "Brian" updates the last share using the sharing API with
