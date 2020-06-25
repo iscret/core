@@ -201,7 +201,7 @@ class WebUISharingContext extends RawMinkContext implements Context {
 	}
 
 	/**
-	 * @Then /^the expiration date input field should (not |)be visible for the (user|group) "([^"]*)" in the share dialog$/
+	 * @Then /^the expiration date input field should (not |)be visible for the (user|group|federated user) "([^"]*)" ?(?:with displayname "([^"]*)")? in the share dialog$/
 	 *
 	 * @param string $shouldOrNot
 	 * @param string $type
@@ -209,10 +209,13 @@ class WebUISharingContext extends RawMinkContext implements Context {
 	 *
 	 * @return void
 	 */
-	public function expirationFieldVisibleForUser($shouldOrNot, $type, $receiver) {
+	public function expirationFieldVisibleForUser($shouldOrNot, $type, $receiver, $displayname = null) {
 		if ($type === "user") {
 			$receiver = $this->featureContext->getActualUsername($receiver);
 			$receiver = $this->featureContext->getDisplayNameForUser($receiver);
+		} elseif ($type === "federated user") {
+			$receiver = $this->featureContext->getActualUsername($receiver);
+			$receiver = $this->featureContext->substituteInLineCodes($displayname, $receiver);
 		}
 		$expected = ($shouldOrNot === "");
 		$this->sharingDialog->openShareActionsDropDown($type, $receiver);
@@ -225,7 +228,7 @@ class WebUISharingContext extends RawMinkContext implements Context {
 	}
 
 	/**
-	 * @Then /^the expiration date input field should be empty for the (user|group) "([^"]*)" in the share dialog$/
+	 * @Then /^the expiration date input field should be empty for the (user|group|federated user) "([^"]*)" ?(?:with displayname "([^"]*)")? in the share dialog$/
 	 *
 	 * @param string $type
 	 * @param string $receiver
@@ -233,10 +236,13 @@ class WebUISharingContext extends RawMinkContext implements Context {
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function expirationFieldEmptyForUser($type, $receiver) {
+	public function expirationFieldEmptyForUser($type, $receiver, $displayname = null) {
 		if ($type === "user") {
 			$receiver = $this->featureContext->getActualUsername($receiver);
 			$receiver = $this->featureContext->getDisplayNameForUser($receiver);
+		} elseif ($type === "federated user") {
+			$receiver = $this->featureContext->getActualUsername($receiver);
+			$receiver = $this->featureContext->substituteInLineCodes($displayname, $receiver);
 		}
 		$expirationDateInInputField = $this->sharingDialog->getExpirationDateFor($receiver, $type);
 		Assert::assertEquals(
@@ -248,7 +254,7 @@ class WebUISharingContext extends RawMinkContext implements Context {
 	}
 
 	/**
-	 * @When /^the user changes expiration date for share of (user|group) "([^"]*)" to "([^"]*)" in the share dialog$/
+	 * @When /^the user changes expiration date for share of (user|group|federated user) "([^"]*)" ?(?:with displayname "([^"]*)")? to "([^"]*)" in the share dialog$/
 	 *
 	 * @param string $type
 	 * @param string $receiver
@@ -256,10 +262,13 @@ class WebUISharingContext extends RawMinkContext implements Context {
 	 *
 	 * @return void
 	 */
-	public function expirationDateChangedTo($type, $receiver, $days) {
+	public function expirationDateChangedTo($type, $receiver, $displayname = null, $days) {
 		if ($type === "user") {
 			$receiver = $this->featureContext->getActualUsername($receiver);
 			$receiver = $this->featureContext->getDisplayNameForUser($receiver);
+		} elseif ($type === "federated user") {
+			$receiver = $this->featureContext->getActualUsername($receiver);
+			$receiver = $this->featureContext->substituteInLineCodes($displayname, $receiver);
 		}
 		$expectedDate = \date('d-m-Y', \strtotime($days));
 		$this->sharingDialog->openShareActionsDropDown($type, $receiver);
@@ -267,7 +276,7 @@ class WebUISharingContext extends RawMinkContext implements Context {
 	}
 
 	/**
-	 * @Then /^the expiration date input field should be "([^"]*)" for the (user|group) "([^"]*)" in the share dialog$/
+	 * @Then /^the expiration date input field should be "([^"]*)" for the (user|group|federated user) "([^"]*)" ?(?:with displayname "([^"]*)")? in the share dialog$/
 	 *
 	 * @param string $days
 	 * @param string $type
@@ -276,10 +285,13 @@ class WebUISharingContext extends RawMinkContext implements Context {
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function expirationDateShouldBe($days, $type, $receiver) {
+	public function expirationDateShouldBe($days, $type, $receiver, $displayname = null) {
 		if ($type === "user") {
 			$receiver = $this->featureContext->getActualUsername($receiver);
 			$receiver = $this->featureContext->getDisplayNameForUser($receiver);
+		} elseif ($type === "federated user") {
+			$receiver = $this->featureContext->getActualUsername($receiver);
+			$receiver = $this->featureContext->substituteInLineCodes($displayname, $receiver);
 		}
 		if (\strtotime($days) !== false) {
 			$expectedExpirationDate = \date('d-m-Y', \strtotime($days));
