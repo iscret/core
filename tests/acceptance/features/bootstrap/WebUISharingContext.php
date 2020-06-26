@@ -206,6 +206,7 @@ class WebUISharingContext extends RawMinkContext implements Context {
 	 * @param string $shouldOrNot
 	 * @param string $type
 	 * @param string $receiver
+	 * @param string|null $displayname
 	 *
 	 * @return void
 	 */
@@ -232,6 +233,7 @@ class WebUISharingContext extends RawMinkContext implements Context {
 	 *
 	 * @param string $type
 	 * @param string $receiver
+	 * @param string|null $displayname
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -258,11 +260,12 @@ class WebUISharingContext extends RawMinkContext implements Context {
 	 *
 	 * @param string $type
 	 * @param string $receiver
+	 * @param string|null $displayname
 	 * @param string $days
 	 *
 	 * @return void
 	 */
-	public function expirationDateChangedTo($type, $receiver, $displayname = null, $days) {
+	public function expirationDateChangedTo($type, $receiver, $displayname = null, $days = '') {
 		if ($type === "user") {
 			$receiver = $this->featureContext->getActualUsername($receiver);
 			$receiver = $this->featureContext->getDisplayNameForUser($receiver);
@@ -281,6 +284,7 @@ class WebUISharingContext extends RawMinkContext implements Context {
 	 * @param string $days
 	 * @param string $type
 	 * @param string $receiver
+	 * @param string|null $displayname
 	 *
 	 * @return void
 	 * @throws \Exception
