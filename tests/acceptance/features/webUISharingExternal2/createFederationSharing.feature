@@ -119,6 +119,7 @@ Feature: Federation Sharing - sharing with users on other cloud storages
 
   Scenario: expiration date is enabled for federation sharing, sharer checks the expiration date of a federation share
     Given parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "yes"
+    And parameter "shareapi_enforce_expire_date_remote_share" of app "core" has been set to "yes"
     And user "Alice" from server "LOCAL" has shared "lorem.txt" with user "Alice" from server "REMOTE"
     When the user opens the share dialog for file "lorem.txt"
     Then the expiration date input field should be visible for the federated user "Alice" with displayname "%username%@%remote_server% (federated)" in the share dialog
