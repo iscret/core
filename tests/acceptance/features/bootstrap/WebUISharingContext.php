@@ -177,7 +177,7 @@ class WebUISharingContext extends RawMinkContext implements Context {
 	 *
 	 */
 	public function theUserSharesWithUserWithoutClosingDialog(
-		$folder, $remote, $name, ?string $displayname = null, $maxRetries = STANDARD_RETRY_COUNT, $quiet = false
+		$folder, $remote, $name, $displayname = null, $maxRetries = STANDARD_RETRY_COUNT, $quiet = false
 	) {
 		if ($remote === "remote" || $remote === "federated") {
 			$name = $this->featureContext->substituteInLineCodes($displayname, $name);
