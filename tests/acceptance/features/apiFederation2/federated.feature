@@ -544,7 +544,7 @@ Feature: federated
     Examples:
       | ocs-api-version | ocs-status |
       | 1               | 100        |
-      | 2               | 200        |
+#      | 2               | 200        |
 
   Scenario Outline: Federated sharing with default expiration date enabled but not enforced for users, user shares without specifying expireDate
     Given using OCS API version "<ocs_api_version>"

@@ -163,11 +163,12 @@ class WebUISharingContext extends RawMinkContext implements Context {
 	}
 
 	/**
-	 * @When /^the user shares (?:file|folder) "([^"]*)" with (?:(remote|federated)\s)?user "([^"]*)" using the webUI without closing the share dialog$/
+	 * @When /^the user shares (?:file|folder) "([^"]*)" with (?:(remote|federated)\s)?user "([^"]*)" ?(?:with displayname "([^"]*)")? using the webUI without closing the share dialog$/
 	 *
 	 * @param string $folder
 	 * @param string $remote (remote|federated|)
 	 * @param string $name
+	 * @param string|null $displayname
 	 * @param int $maxRetries
 	 * @param bool $quiet
 	 *
@@ -176,8 +177,11 @@ class WebUISharingContext extends RawMinkContext implements Context {
 	 *
 	 */
 	public function theUserSharesWithUserWithoutClosingDialog(
-		$folder, $remote, $name, $maxRetries = STANDARD_RETRY_COUNT, $quiet = false
+		$folder, $remote, $name, ?string $displayname = null, $maxRetries = STANDARD_RETRY_COUNT, $quiet = false
 	) {
+		if ($remote === "remote" || $remote === "federated") {
+			$name = $this->featureContext->substituteInLineCodes($displayname, $name);
+		}
 		$this->theUserSharesUsingWebUIWithoutClosingDialog($folder, "user", $remote, $name, $maxRetries, $quiet);
 	}
 
@@ -351,7 +355,7 @@ class WebUISharingContext extends RawMinkContext implements Context {
 			$folder, $this->getSession()
 		);
 		if ($userOrGroup === "user") {
-			if ($remote === "remote") {
+			if ($remote === "remote" || $remote === "federated") {
 				$this->sharingDialog->shareWithRemoteUser(
 					$name, $this->getSession(), $maxRetries, $quiet
 				);
