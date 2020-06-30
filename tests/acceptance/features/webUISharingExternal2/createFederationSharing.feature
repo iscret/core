@@ -156,7 +156,7 @@ Feature: Federation Sharing - sharing with users on other cloud storages
     When the user opens the share dialog for file "lorem.txt"
     And the user changes expiration date for share of federated user "Alice" with displayname "%username%@%remote_server% (federated)" to "+4 days" in the share dialog
 #    Cannot set expiration date more than 3 days in the future
-    And the expiration date input field should be "+ 3 days" for the federated user "Alice" with displayname "%username%@%remote_server% (federated)" in the share dialog
+    Then the expiration date input field should be "+ 3 days" for the federated user "Alice" with displayname "%username%@%remote_server% (federated)" in the share dialog
     And the information of the last share of user "Alice" should include
       | share_type | federated  |
       | path       | /lorem.txt |
@@ -175,9 +175,8 @@ Feature: Federation Sharing - sharing with users on other cloud storages
     And the user has reloaded the current page of the webUI
     When the user shares file "lorem (2).txt" with user "Brian" using the webUI without closing the share dialog
     And the user changes expiration date for share of user "Brian" to "+10 days" in the share dialog
-    Then the expiration date input field should be visible for the user "Brian" in the share dialog
-    And the expiration date input field should be "+ 10 days" for the user "Brian" in the share dialog
-    Then the information of the last share of user "Alice" should include
+    Then the expiration date input field should be "+ 10 days" for the user "Brian" in the share dialog
+    And the information of the last share of user "Alice" should include
       | share_type  | user           |
       | share_with  | Brian          |
       | path        | /lorem (2).txt |
@@ -196,8 +195,8 @@ Feature: Federation Sharing - sharing with users on other cloud storages
     And the user has reloaded the current page of the webUI
     When the user shares file "lorem (2).txt" with federated user "Brian" with displayname "%username%@%remote_server_without_scheme%" using the webUI without closing the share dialog
     And the user changes expiration date for share of federated user "Brian" with displayname "%username%@%remote_server_without_scheme% (federated)" to "+4 days" in the share dialog
-    And the expiration date input field should be "+ 4 days" for the federated user "Brian" with displayname "%username%@%remote_server_without_scheme% (federated)" in the share dialog
-    Then the information of the last share of user "Alice" should include
+    Then the expiration date input field should be "+ 4 days" for the federated user "Brian" with displayname "%username%@%remote_server_without_scheme% (federated)" in the share dialog
+    And the information of the last share of user "Alice" should include
       | share_type  | federated      |
       | path        | /lorem (2).txt |
       | expiration  | +4 days        |
@@ -214,9 +213,8 @@ Feature: Federation Sharing - sharing with users on other cloud storages
     And using server "LOCAL"
     And the user has reloaded the current page of the webUI
     When the user shares file "lorem (2).txt" with user "Brian" using the webUI without closing the share dialog
-    Then the expiration date input field should be visible for the user "Brian" in the share dialog
-    And the expiration date input field should be empty for the user "Brian" in the share dialog
-    Then the information of the last share of user "Alice" should include
+    Then the expiration date input field should be empty for the user "Brian" in the share dialog
+    And the information of the last share of user "Alice" should include
       | share_type  | user           |
       | share_with  | Brian          |
       | path        | /lorem (2).txt |
@@ -236,7 +234,7 @@ Feature: Federation Sharing - sharing with users on other cloud storages
     When the user shares file "lorem (2).txt" with federated user "Brian" with displayname "%username%@%remote_server_without_scheme%" using the webUI without closing the share dialog
     Then the expiration date input field should be visible for the federated user "Brian" with displayname "%username%@%remote_server_without_scheme% (federated)" in the share dialog
     And the expiration date input field should be "+ 5 days" for the federated user "Brian" with displayname "%username%@%remote_server_without_scheme% (federated)" in the share dialog
-    Then the information of the last share of user "Alice" should include
+    And the information of the last share of user "Alice" should include
       | share_type  | federated      |
       | path        | /lorem (2).txt |
       | expiration  | +5 days        |
