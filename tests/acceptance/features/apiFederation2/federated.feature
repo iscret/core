@@ -528,7 +528,7 @@ Feature: federated
       | 1               | 100        |
 #      | 2               | 200        |
 
-  Scenario Outline: Federated sharing with default expiration date enabled and enforced
+  Scenario Outline: Federated sharing with default expiration date enabled and enforced, user shares without specifying expireDate
     Given using OCS API version "<ocs_api_version>"
     And parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "yes"
     And parameter "shareapi_enforce_expire_date_remote_share" of app "core" has been set to "yes"
@@ -536,7 +536,7 @@ Feature: federated
     Then the OCS status code should be "<ocs-status>"
     And the HTTP status code should be "200"
     And the fields of the last response to user "Brian" sharing with user "Alice" should include
-      | expiration | today |
+      | expiration | +7days |
     Examples:
       | ocs_api_version | ocs-status |
       | 1               | 100        |
