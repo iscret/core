@@ -232,10 +232,9 @@ Feature: Federation Sharing - sharing with users on other cloud storages
     And using server "LOCAL"
     And the user has reloaded the current page of the webUI
     When the user shares file "lorem (2).txt" with federated user "Brian" with displayname "%username%@%remote_server_without_scheme%" using the webUI without closing the share dialog
-    Then the expiration date input field should be visible for the federated user "Brian" with displayname "%username%@%remote_server_without_scheme% (federated)" in the share dialog
-    And the expiration date input field should be "+ 7 days" for the federated user "Brian" with displayname "%username%@%remote_server_without_scheme% (federated)" in the share dialog
+    Then the expiration date input field should be empty for the federated user "Brian" with displayname "%username%@%remote_server_without_scheme% (federated)" in the share dialog
     And the information of the last share of user "Alice" should include
       | share_type  | federated      |
       | path        | /lorem (2).txt |
-      | expiration  | +7 days        |
+      | expiration  |                |
       | uid_owner   | Alice          |
