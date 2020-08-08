@@ -1,6 +1,7 @@
 <?php
 /**
  * @author Semih Serhat Karakaya <karakayasemi@itu.edu.tr>
+ * @author Piotr Mrowczynski <piotr@owncloud.com>
  *
  * @copyright Copyright (c) 2019, ownCloud GmbH
  * @license AGPL-3.0
@@ -81,6 +82,11 @@ class TransferOwnershipTest extends TestCase {
 	/**
 	 * @var IUser
 	 */
+	private $shareSender;
+
+	/**
+	 * @var IUser
+	 */
 	private $sourceUser;
 
 	/**
@@ -102,14 +108,20 @@ class TransferOwnershipTest extends TestCase {
 		$this->encryptionManager = $this->createMock(Manager::class);
 		$this->providerFactory = new ProviderFactory(\OC::$server);
 
+		$this->shareSender = $this->createUser('share-sender');
 		$this->sourceUser = $this->createUser('source-user');
 		$this->targetUser = $this->createUser('target-user');
 		$this->unloggedUser = $this->createUser('unlogged-user');
+		$this->shareReceiver = $this->createUser('share-receiver');
+		$this->loginAsUser('share-sender');
+		$this->logout();
 		$this->loginAsUser('source-user');
 		$this->logout();
 		$this->loginAsUser('target-user');
 		$this->logout();
-		$this->createUser('share-receiver');
+		$this->loginAsUser('share-receiver');
+		$this->logout();
+
 		$this->createTestFilesForSourceUser();
 
 		$command = new TransferOwnership(
@@ -124,10 +136,11 @@ class TransferOwnershipTest extends TestCase {
 	}
 	protected function tearDown(): void {
 		$this->tearDownUserTrait();
-		$this->shareManager->userDeleted('share-receiver');
+		$this->shareManager->userDeleted($this->shareSender->getUID());
 		$this->shareManager->userDeleted($this->sourceUser->getUID());
 		$this->shareManager->userDeleted($this->targetUser->getUID());
 		$this->shareManager->userDeleted($this->unloggedUser->getUID());
+		$this->shareManager->userDeleted($this->shareReceiver->getUID());
 		parent::tearDown();
 	}
 
@@ -135,6 +148,8 @@ class TransferOwnershipTest extends TestCase {
 	 * Creates files and folder for source-user as the following tree:
 	 *
 	 * ├── file_in_user_root_folder
+	 * ├── shared_file_to_source_user (shared by share-sender)
+	 * ├── reshare_file_to_source_user (shared by share-sender and reshared by source-user to share-receiver)
 	 * ├── shared_file_in_user_root_folder (shared with share-receiver)
 	 * ├── transfer
 	 * │   ├── shared_file (shared with share-receiver)
@@ -144,9 +159,32 @@ class TransferOwnershipTest extends TestCase {
 	 * │       ├── shared_file_in_sub_folder (shared with share-receiver)
 	 */
 	private function createTestFilesForSourceUser() {
-		$userFolder = \OC::$server->getUserFolder($this->sourceUser->getUID());
-		$userFolder->newFile('file_in_user_root_folder');
-		$file = $userFolder->newFile('shared_file_in_user_root_folder');
+		$sharerFolder = \OC::$server->getUserFolder($this->shareSender->getUID());
+
+		$file = $sharerFolder->newFile('shared_file_to_source_user');
+		$file->putContent('A test file');
+		$share = $this->shareManager->newShare();
+		$share->setNode($file)
+			->setSharedBy('share-sender')
+			->setSharedWith('source-user')
+			->setShareType(Share::SHARE_TYPE_USER)
+			->setPermissions(19);
+		$this->shareManager->createShare($share);
+
+		$file = $sharerFolder->newFile('reshare_file_to_source_user');
+		$file->putContent('A test file');
+		$share = $this->shareManager->newShare();
+		$share->setNode($file)
+			->setSharedBy('share-sender')
+			->setSharedWith('source-user')
+			->setShareType(Share::SHARE_TYPE_USER)
+			->setPermissions(19);
+		$this->shareManager->createShare($share);
+
+		$sourceUserFolder = \OC::$server->getUserFolder($this->sourceUser->getUID());
+
+		$sourceUserFolder->newFile('file_in_user_root_folder');
+		$file = $sourceUserFolder->newFile('shared_file_in_user_root_folder');
 		$share = $this->shareManager->newShare();
 		$share->setNode($file)
 			->setSharedBy('source-user')
@@ -155,10 +193,10 @@ class TransferOwnershipTest extends TestCase {
 			->setPermissions(19);
 		$this->shareManager->createShare($share);
 
-		$userFolder->newFolder('transfer');
-		$userFolder->newFile('transfer/test_file1');
-		$userFolder->newFile('transfer/test_file2');
-		$file = $userFolder->newFile('transfer/shared_file');
+		$sourceUserFolder->newFolder('transfer');
+		$sourceUserFolder->newFile('transfer/test_file1');
+		$sourceUserFolder->newFile('transfer/test_file2');
+		$file = $sourceUserFolder->newFile('transfer/shared_file');
 		$share = $this->shareManager->newShare();
 		$share->setNode($file)
 			->setSharedBy('source-user')
@@ -167,8 +205,8 @@ class TransferOwnershipTest extends TestCase {
 			->setPermissions(19);
 		$this->shareManager->createShare($share);
 
-		$userFolder->newFolder('transfer/sub_folder');
-		$file = $userFolder->newFile('transfer/sub_folder/shared_file_in_sub_folder');
+		$sourceUserFolder->newFolder('transfer/sub_folder');
+		$file = $sourceUserFolder->newFile('transfer/sub_folder/shared_file_in_sub_folder');
 		$share = $this->shareManager->newShare();
 		$share->setNode($file)
 			->setSharedBy('source-user')
@@ -177,9 +215,18 @@ class TransferOwnershipTest extends TestCase {
 			->setPermissions(19);
 		$this->shareManager->createShare($share);
 
-		$subFolder = $userFolder->get('transfer/sub_folder');
+		$subFolder = $sourceUserFolder->get('transfer/sub_folder');
 		$share = $this->shareManager->newShare();
 		$share->setNode($subFolder)
+			->setSharedBy('source-user')
+			->setSharedWith('share-receiver')
+			->setShareType(Share::SHARE_TYPE_USER)
+			->setPermissions(19);
+		$this->shareManager->createShare($share);
+
+		$file = $sourceUserFolder->get('reshare_file_to_source_user');
+		$share = $this->shareManager->newShare();
+		$share->setNode($file)
 			->setSharedBy('source-user')
 			->setSharedWith('share-receiver')
 			->setShareType(Share::SHARE_TYPE_USER)
@@ -197,16 +244,42 @@ class TransferOwnershipTest extends TestCase {
 		$output = $this->commandTester->getDisplay();
 
 		$this->assertStringContainsString('Transferring files to target-user', $output);
+
+		// check nodes count
+
+		$sourceUserFolder = \OC::$server->getUserFolder($this->sourceUser->getUID());
+		$this->assertTrue($sourceUserFolder->nodeExists('shared_file_to_source_user'));
+		$this->assertTrue($sourceUserFolder->nodeExists('reshare_file_to_source_user'));
+		$this->assertFalse($sourceUserFolder->nodeExists('file_in_user_root_folder'));
+		$this->assertFalse($sourceUserFolder->nodeExists('shared_file_in_user_root_folder'));
+		$this->assertFalse($sourceUserFolder->nodeExists('transfer'));
+
+		/** @var $transferedFolder Folder */
+		$targetUserFolder = \OC::$server->getUserFolder($this->targetUser->getUID());
+		$targetUserFolderContents = $targetUserFolder->getDirectoryListing();
+		$this->assertCount(1, $targetUserFolderContents);
+		$transferedFolder = $targetUserFolderContents[0];
+		$this->assertFalse($transferedFolder->nodeExists('shared_file_to_source_user'));
+		$this->assertFalse($transferedFolder->nodeExists('reshare_file_to_source_user'));
+		$this->assertTrue($transferedFolder->nodeExists('file_in_user_root_folder'));
+		$this->assertTrue($transferedFolder->nodeExists('shared_file_in_user_root_folder'));
+		$this->assertTrue($transferedFolder->nodeExists('transfer/shared_file'));
+		$this->assertTrue($transferedFolder->nodeExists('transfer/test_file1'));
+		$this->assertTrue($transferedFolder->nodeExists('transfer/test_file2'));
+		$this->assertTrue($transferedFolder->nodeExists('transfer/sub_folder/'));
+		$this->assertTrue($transferedFolder->nodeExists('transfer/sub_folder/shared_file_in_sub_folder'));
+
+		// check shares counts
 		$sourceShares = $this->shareManager->getSharesBy($this->sourceUser->getUID(), Share::SHARE_TYPE_USER);
 		$targetShares = $this->shareManager->getSharesBy($this->targetUser->getUID(), Share::SHARE_TYPE_USER);
-		$this->assertCount(0, $sourceShares);
+		$this->assertCount(1, $sourceShares);
 		$this->assertCount(4, $targetShares);
 	}
 
 	public function folderPathProvider() {
 		return [
-			['transfer', 1, 3],
-			['transfer/sub_folder', 2, 2]
+			['transfer', 2, 3],
+			['transfer/sub_folder', 3, 2]
 		];
 	}
 
@@ -247,7 +320,7 @@ class TransferOwnershipTest extends TestCase {
 		$this->assertStringContainsString('Transferring files to unlogged-user', $output);
 		$sourceShares = $this->shareManager->getSharesBy($this->sourceUser->getUID(), Share::SHARE_TYPE_USER);
 		$targetShares = $this->shareManager->getSharesBy($this->unloggedUser->getUID(), Share::SHARE_TYPE_USER);
-		$this->assertCount(0, $sourceShares);
+		$this->assertCount(1, $sourceShares);
 		$this->assertCount(4, $targetShares);
 	}
 
