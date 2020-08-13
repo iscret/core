@@ -852,7 +852,7 @@ trait Provisioning {
 				if (OcisHelper::isTestingOnOcis()) {
 					$attributesToCreateUser['username'] = $userAttributes['userid'];
 					if ($userAttributes['email'] === null) {
-						$attributesToCreateUser['email'] = $userAttributes['username'] . '@owncloud.org';
+						$attributesToCreateUser['email'] = $userAttributes['username'] ?? $userAttributes['userid'] . '@owncloud.org';
 					} else {
 						$attributesToCreateUser['email'] = $userAttributes['email'];
 					}
@@ -895,6 +895,10 @@ trait Provisioning {
 		$users = [];
 		$editData = [];
 		foreach ($usersAttributes as $userAttributes) {
+			// On Eos storage backend when the user data is cleared after test run
+			// Running another test immediately fails. So Send this request to create user home directory
+			HttpRequestHelper::get($this->getBaseUrl() . "/ocs/v2.php/apps/notifications/api/v1/notifications?format=json", $userAttributes['userid'], $userAttributes['password']);
+
 			\array_push($users, $userAttributes['userid']);
 			$this->addUserToCreatedUsersList($userAttributes['userid'], $userAttributes['password'], $userAttributes['displayName'], $userAttributes['email']);
 			if (isset($userAttributes['displayName'])) {
@@ -4129,7 +4133,9 @@ trait Provisioning {
 		$this->cleanupDatabaseGroups();
 
 		if (OcisHelper::isTestingOnOcis()) {
-			OcisHelper::deleteRevaUserData("");
+			foreach ($this->getCreatedUsers() as $user) {
+				OcisHelper::deleteRevaUserData($user["actualUsername"]);
+			}
 		} else {
 			$this->resetAdminUserAttributes();
 		}
