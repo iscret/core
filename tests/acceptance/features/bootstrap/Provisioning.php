@@ -856,6 +856,10 @@ trait Provisioning {
 					} else {
 						$attributesToCreateUser['email'] = $userAttributes['email'];
 					}
+					// gidnumber 30000 is gid of default group "users"
+					$attributesToCreateUser['gidnumber'] = 30000;
+					// A new random number for uidnumber
+					$attributesToCreateUser['uidnumber'] = 40040 + count($this->getCreatedUsers());
 				}
 				// Create a OCS request for creating the user. The request is not sent to the server yet.
 				$request = OcsApiHelper::createOcsRequest(
