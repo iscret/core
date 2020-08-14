@@ -913,6 +913,7 @@ trait Sharing {
 			$this->ocsApiVersion,
 			$this->sharingApiVersion
 		);
+		var_dump($this->response->getBody()->getContents());
 		$this->lastShareData = $this->getResponseXml();
 		if ($shareType === 'public_link' && isset($this->lastShareData->data)) {
 			$linkName = (string) $this->lastShareData->data[0]->name;

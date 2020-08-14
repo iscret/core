@@ -455,6 +455,9 @@ trait Provisioning {
 				["config:system:set skeletondirectory --value $path"],
 				null, null, $baseUrl
 			);
+			if (OcisHelper::isTestingOnOcis()) {
+				OcisHelper::setSkeleton();
+			}
 		}
 	}
 
@@ -4136,6 +4139,7 @@ trait Provisioning {
 			foreach ($this->getCreatedUsers() as $user) {
 				OcisHelper::deleteRevaUserData($user["actualUsername"]);
 			}
+			OcisHelper::deleteRevaUserShares();
 		} else {
 			$this->resetAdminUserAttributes();
 		}
@@ -4311,6 +4315,9 @@ trait Provisioning {
 			["config:system:delete skeletondirectory"],
 			null, null, $baseUrl
 		);
+		if (OcisHelper::isTestingOnOcis()) {
+			OcisHelper::unSetSkeleton();
+		}
 		return $path;
 	}
 }

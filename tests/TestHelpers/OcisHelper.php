@@ -33,6 +33,15 @@ use PHPUnit\Framework\Assert;
  */
 class OcisHelper {
 
+	private static $withSkeleton = true;
+
+	public static function setSkeleton() {
+		self::$withSkeleton = true;
+	}
+
+	public static function unSetSkeleton() {
+		self::$withSkeleton = false;
+	}
 	/**
 	 * @return bool
 	 */
@@ -55,6 +64,25 @@ class OcisHelper {
 	}
 
 	/**
+	 * @return bool
+	 */
+	public static function getDeleteUserShareCommand() {
+		return (\getenv("DELETE_USER_SHARE_CMD"));
+	}
+
+	/**
+	 * @param string $user
+	 *
+	 * @return void
+	 */
+	public static function deleteRevaUserShares() {
+		$deleteCmd = self::getDeleteUserShareCommand();
+		if ($deleteCmd !== false) {
+			\exec($deleteCmd);
+		}
+	}
+
+	/**
 	 * @param string $user
 	 *
 	 * @return void
@@ -65,6 +93,7 @@ class OcisHelper {
 			$deleteCmd = \sprintf($deleteCmd, $user[0] . '/' . $user);
 //			var_dump($deleteCmd);
 			\exec($deleteCmd);
+			\exec('docker exec -it ocis rm /var/tmp/ocis-accounts/' . $user);
 		} else {
 			self::recurseRmdir(self::getOcisRevaDataRoot() . "/data/" . $user);
 		}
@@ -108,6 +137,9 @@ class OcisHelper {
 	 * @throws \Exception
 	 */
 	public static function recurseUpload($baseUrl, $source, $userId, $password, $destination = '') {
+		if (!self::$withSkeleton) {
+			return;
+		}
 		if ($destination !== '') {
 			$response = WebDavHelper::makeDavRequest(
 				$baseUrl,
