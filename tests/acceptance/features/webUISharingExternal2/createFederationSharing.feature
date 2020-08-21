@@ -160,7 +160,7 @@ Feature: Federation Sharing - sharing with users on other cloud storages
     When the user opens the share dialog for file "lorem.txt"
     And the user changes expiration date for share of federated user "Alice" with displayname "%username%@%remote_server% (federated)" to "+4 days" in the share dialog
 #    Cannot set expiration date more than 3 days in the future
-    Then the expiration date input field should be "+ 3 days" for the federated user "Alice" with displayname "%username%@%remote_server% (federated)" in the share dialog
+    Then the expiration date input field should be "+3 days" for the federated user "Alice" with displayname "%username%@%remote_server% (federated)" in the share dialog
     And the information of the last share of user "Alice" should include
       | share_type | federated  |
       | path       | /lorem.txt |
