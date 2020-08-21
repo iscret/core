@@ -434,7 +434,7 @@ class AdminSharingSettingsPage extends SharingSettingsPage {
 		$this->assertElementNotNull(
 			$expirationDay,
 			__METHOD__ .
-			" could not find group share expiration day field"
+			" could not find remote share expiration day field"
 		);
 		return $expirationDay->getValue($expirationDay);
 	}
@@ -581,7 +581,7 @@ class AdminSharingSettingsPage extends SharingSettingsPage {
 	}
 
 	/**
-	 * set expiration date for group share
+	 * set expiration date for remote share
 	 *
 	 * @param int $date
 	 * @param Session $session
