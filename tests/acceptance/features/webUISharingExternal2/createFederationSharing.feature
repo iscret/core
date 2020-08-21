@@ -105,6 +105,7 @@ Feature: Federation Sharing - sharing with users on other cloud storages
     Then federated user "Alice" with displayname "%username%@%remote_server% (Remote share)" should be listed as share receiver via "simple-folder" on the webUI
     And user "Brian" with displayname "%displayname%" should be listed as share receiver via "sub-folder" on the webUI
 
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
   Scenario: expiration date is disabled for federation sharing, sharer checks the expiration date of a federation share
     Given parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "no"
     And user "Alice" from server "LOCAL" has shared "lorem.txt" with user "Alice" from server "REMOTE"
@@ -117,6 +118,7 @@ Feature: Federation Sharing - sharing with users on other cloud storages
       | expiration  |            |
       | uid_owner   | Alice      |
 
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
   Scenario: expiration date is enabled for federation sharing, sharer checks the expiration date of a federation share
     Given parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "yes"
     And parameter "shareapi_enforce_expire_date_remote_share" of app "core" has been set to "yes"
@@ -130,6 +132,7 @@ Feature: Federation Sharing - sharing with users on other cloud storages
       | expiration | +7 days    |
       | uid_owner  | Alice      |
 
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
   Scenario Outline: expiration date is enforced for federation sharing, user shares file
     Given parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "yes"
     And parameter "shareapi_enforce_expire_date_remote_share" of app "core" has been set to "yes"
@@ -148,6 +151,7 @@ Feature: Federation Sharing - sharing with users on other cloud storages
       | 3        | +3 days  |
       | 0        | today    |
 
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
   Scenario: expiration date is enforced for federation sharing, user shares and tries to change expiration date more than allowed
     Given parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "yes"
     And parameter "shareapi_enforce_expire_date_remote_share" of app "core" has been set to "yes"
@@ -163,6 +167,7 @@ Feature: Federation Sharing - sharing with users on other cloud storages
       | expiration | +3 days    |
       | uid_owner  | Alice      |
 
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
   Scenario: expiration date is enforced for federated sharing, user receives a share with expiration date and reshares with expiration date less than the original with a local user
     Given user "Brian" has been created with default attributes and without skeleton files
     And using server "REMOTE"
@@ -183,6 +188,7 @@ Feature: Federation Sharing - sharing with users on other cloud storages
       | expiration  | +10 days       |
       | uid_owner   | Alice          |
 
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
   Scenario: expiration date is enforced for federated sharing, user receives a share with expiration date and reshares with expiration date less than the original with another federated user
     Given using server "REMOTE"
     And user "Brian" has been created with default attributes and without skeleton files
@@ -202,6 +208,7 @@ Feature: Federation Sharing - sharing with users on other cloud storages
       | expiration  | +4 days        |
       | uid_owner   | Alice          |
 
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
   Scenario: expiration date is enforced for federated remote sharer, local receiver reshares received file with another local user
     Given user "Brian" has been created with default attributes and without skeleton files
     And using server "REMOTE"
@@ -221,6 +228,7 @@ Feature: Federation Sharing - sharing with users on other cloud storages
       | expiration  |                |
       | uid_owner   | Alice          |
 
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
   Scenario: expiration date is enforced for federated remote sharer, local receiver reshares received file with another federated user
     Given using server "REMOTE"
     And user "Brian" has been created with default attributes and without skeleton files

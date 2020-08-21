@@ -485,7 +485,8 @@ Feature: federated
       | 1               |
       | 2               |
 
-  Scenario Outline: Federate share a file with another server with expiration date
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
+  Scenario Outline: Federated share a file with another server with expiration date
     Given using OCS API version "<ocs-api-version>"
     And parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "yes"
     And parameter "shareapi_enforce_expire_date_remote_share" of app "core" has been set to "yes"
@@ -515,6 +516,7 @@ Feature: federated
       | 1               | 100        |
       | 2               | 200        |
 
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
   Scenario Outline: Federated sharing with default expiration date enabled but not enforced, user shares without specifying expireDate
     Given using OCS API version "<ocs_api_version>"
     And parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "yes"
@@ -528,6 +530,7 @@ Feature: federated
       | 1               | 100        |
 #      | 2               | 200        |
 
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
   Scenario Outline: Federated sharing with default expiration date enabled and enforced, user shares without specifying expireDate
     Given using OCS API version "<ocs_api_version>"
     And parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "yes"
@@ -542,6 +545,7 @@ Feature: federated
       | 1               | 100        |
       | 2               | 200        |
 
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
   Scenario Outline: Federated sharing with default expiration date disabled
     Given using OCS API version "<ocs_api_version>"
     And parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "no"
@@ -555,7 +559,8 @@ Feature: federated
       | 1               | 100        |
       | 2               | 200        |
 
-  Scenario Outline: Expiration date is enforced for federate share, user modifies expiration date
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
+  Scenario Outline: Expiration date is enforced for federated share, user modifies expiration date
     Given using OCS API version "<ocs-api-version>"
     And parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "yes"
     And parameter "shareapi_enforce_expire_date_remote_share" of app "core" has been set to "yes"
@@ -572,6 +577,7 @@ Feature: federated
       | 1               | 100        |
       | 2               | 200        |
 
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
   Scenario Outline: Federated sharing with default expiration date enabled and enforced, user shares with expiration date more than the default
     Given using OCS API version "<ocs_api_version>"
     And parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "yes"
@@ -588,7 +594,8 @@ Feature: federated
       | 1               | 200              |
       | 2               | 404              |
 
-  Scenario Outline: User modifies expiration date for federate reshare of a file with another server with default expiration date
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
+  Scenario Outline: User modifies expiration date for federated reshare of a file with another server with default expiration date
     Given using OCS API version "<ocs_api_version>"
     And using server "LOCAL"
     And user "Carol" has been created with default attributes and without skeleton files
@@ -609,7 +616,8 @@ Feature: federated
       | 1               | 100        |
       | 2               | 200        |
 
-  Scenario Outline: User modifies expiration date more than the default for federate reshare of a file
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
+  Scenario Outline: User modifies expiration date more than the default for federated reshare of a file
     Given using OCS API version "<ocs_api_version>"
     And using server "LOCAL"
     And user "Carol" has been created with default attributes and without skeleton files
