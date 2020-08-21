@@ -163,6 +163,7 @@ Feature: admin sharing settings
     When the administrator enables default expiration date for group shares using the webUI
     Then the config key "shareapi_default_expire_date_group_share" of app "core" should have value "yes"
 
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
   Scenario: enable default expiration date for remote shares
     Given the administrator has browsed to the admin sharing settings page
     When the administrator enables default expiration date for remote shares using the webUI
@@ -182,6 +183,7 @@ Feature: admin sharing settings
     And the administrator updates the group share expiration date to "11" days using the webUI
     Then the config key "shareapi_expire_after_n_days_group_share" of app "core" should have value "11"
 
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
   Scenario: set a different default expiration days for remote shares
     Given the administrator has browsed to the admin sharing settings page
     When the administrator enables default expiration date for remote shares using the webUI
@@ -202,6 +204,7 @@ Feature: admin sharing settings
     And the administrator enforces maximum expiration date for group shares using the webUI
     Then the config key "shareapi_enforce_expire_date_group_share" of app "core" should have value "yes"
 
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
   Scenario: set default expiration days for remote shares and enforce as maximum expiration days
     Given the administrator has browsed to the admin sharing settings page
     When the administrator enables default expiration date for remote shares using the webUI
@@ -222,11 +225,12 @@ Feature: admin sharing settings
     Then the default expiration date checkbox for group shares should be enabled on the webUI
     And the expiration date for group shares should set to "7" days on the webUI
 
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
   Scenario: check previously set default expiration days for remote shares
     Given parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "yes"
     When the administrator browses to the admin sharing settings page
     Then the default expiration date checkbox for remote shares should be enabled on the webUI
-    And the expiration date for group shares should set to "7" days on the webUI
+    And the expiration date for remote shares should set to "7" days on the webUI
 
   @skipOnOcV10.3
   Scenario: check previously enforced maximum expiration days for user shares
@@ -242,7 +246,8 @@ Feature: admin sharing settings
     When the administrator browses to the admin sharing settings page
     Then the enforce maximum expiration date checkbox for group shares should be enabled on the webUI
 
-  Scenario: check previously enforced maximum expiration days for group shares
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
+  Scenario: check previously enforced maximum expiration days for remote shares
     Given parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "yes"
     And parameter "shareapi_enforce_expire_date_remote_share" of app "core" has been set to "yes"
     When the administrator browses to the admin sharing settings page
@@ -262,7 +267,8 @@ Feature: admin sharing settings
     When the administrator browses to the admin sharing settings page
     Then the expiration date for group shares should set to "5" days on the webUI
 
-  Scenario: check previously set expiration days for group shares
+  @skipOnOcV10.3 @skipOnOcV10.4 @skipOnOcV10.5.0
+  Scenario: check previously set expiration days for remote shares
     Given parameter "shareapi_default_expire_date_remote_share" of app "core" has been set to "yes"
     And parameter "shareapi_expire_after_n_days_remote_share" of app "core" has been set to "5"
     When the administrator browses to the admin sharing settings page
