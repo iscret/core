@@ -134,7 +134,7 @@ class WebUIAdminSharingSettingsContext extends RawMinkContext implements Context
 	 *
 	 * @return void
 	 */
-	public function theDefaultExpirationDateCheckboxForRemoteSharesShouldBeEnabledOnTheWebui() {
+	public function setDefaultExpirationDateForRemoteCheckboxSharesShouldBeEnabled() {
 		$checkboxElement = $this->adminSharingSettingsPage->getDefaultExpirationForRemoteShareElement();
 		$this->assertCheckBoxIsChecked($checkboxElement);
 	}
@@ -164,7 +164,7 @@ class WebUIAdminSharingSettingsContext extends RawMinkContext implements Context
 	 *
 	 * @return void
 	 */
-	public function theEnforceMaximumExpirationDateCheckboxForRemoteSharesShouldBeEnabledOnTheWebui() {
+	public function enforceMaximumExpirationDateForRemoteSharesCheckboxShouldBeEnabled() {
 		$checkboxElement = $this->adminSharingSettingsPage->getEnforceExpireDateRemoteShareElement();
 		$this->assertCheckBoxIsChecked($checkboxElement);
 	}
@@ -212,7 +212,7 @@ class WebUIAdminSharingSettingsContext extends RawMinkContext implements Context
 	 *
 	 * @return void
 	 */
-	public function theExpirationDateForRemoteSharesShouldSetToDaysOnTheWebui($days) {
+	public function expirationDateForRemoteSharesShouldBeSetToXDays($days) {
 		$expirationDays = $this->adminSharingSettingsPage->getRemoteShareExpirationDays();
 		Assert::assertEquals(
 			$days,
@@ -402,7 +402,7 @@ class WebUIAdminSharingSettingsContext extends RawMinkContext implements Context
 	 *
 	 * @return void
 	 */
-	public function theAdministratorEnforcesMaximumExpirationDateForRemoteSharesUsingTheWebui() {
+	public function administratorEnforcesMaximumExpirationDateForRemoteShares() {
 		$this->adminSharingSettingsPage->enforceMaximumExpirationDateForRemoteShares(
 			$this->getSession()
 		);
@@ -431,13 +431,13 @@ class WebUIAdminSharingSettingsContext extends RawMinkContext implements Context
 	}
 
 	/**
-	 * @When the administrator updates the remote share expiration date to :arg1 days using the webUI
+	 * @When the administrator updates the remote share expiration date to :days days using the webUI
 	 *
 	 * @param int $days
 	 *
 	 * @return void
 	 */
-	public function theAdministratorUpdatesTheRemoteShareExpirationDateToDaysUsingTheWebui($days) {
+	public function administratorUpdatesRemoteShareExpirationTo($days) {
 		$this->adminSharingSettingsPage->setExpirationDaysForRemoteShare($days, $this->getSession());
 	}
 
@@ -457,7 +457,7 @@ class WebUIAdminSharingSettingsContext extends RawMinkContext implements Context
 	 *
 	 * @return void
 	 */
-	public function theAdministratorEnablesDefaultExpirationDateForRemoteSharesUsingTheWebui() {
+	public function theAdministratorEnablesDefaultExpirationDateForRemoteShares() {
 		$this->adminSharingSettingsPage->enableDefaultExpirationDateForRemoteShares(
 			$this->getSession()
 		);
